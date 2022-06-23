@@ -37,4 +37,14 @@ describe 'Fields declaration' do
   it 'raises error if there\'s a name conflict' do
     expect { Article.nosql_attr :some_column }.to raise_error("Attribute some_column already defined")
   end
+
+  it 'fileds are saved as string' do
+    subject.editor = 'John Doe'
+    subject.save!
+    subject.reload
+    expect(subject.editor).to eq('John Doe')
+    expect(subject.data['editor']).to eq('John Doe')
+    expect(subject.data[:editor]).to eq(nil)
+    expect(subject.data.keys.first).to be_a(String)
+  end
 end

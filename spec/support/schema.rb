@@ -11,7 +11,7 @@ class Article < ActiveRecord::Base
   def some_column
   end
 
-  nosql_attrs :body, type: String
+  nosql_attrs :body, :editor, type: String
   nosql_attr :comments_count, type: :Integer, default: 0
   nosql_attr :published, type: :Boolean, default: false
 end
