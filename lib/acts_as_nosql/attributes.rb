@@ -18,12 +18,12 @@ module ActsAsNosql
           type_caster = type ? "ActiveRecord::Type::#{type}".safe_constantize : nil
 
           define_method(name) do
-            self[attribute]&.dig(name) || default
+            self[attribute]&.dig(name.to_s) || default
           end
 
           define_method("#{name}=") do |value|
             self[attribute] ||= {}
-            self[attribute][name] = type_caster ? type_caster.new.cast(value) : value
+            self[attribute][name.to_s] = type_caster ? type_caster.new.cast(value) : value
           end
         end
       end
