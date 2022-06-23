@@ -41,6 +41,7 @@ describe 'Fields declaration' do
   it 'fileds are saved as string' do
     subject.editor = 'John Doe'
     subject.save!
+    subject.reload
     expect(subject.editor).to eq('John Doe')
     expect(subject.data['editor']).to eq('John Doe')
     expect(subject.data[:editor]).to eq(nil)
