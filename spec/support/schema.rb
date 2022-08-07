@@ -16,6 +16,13 @@ class Article < ActiveRecord::Base
   nosql_attr :published, type: :Boolean, default: false
 end
 
+class Setting < ActiveRecord::Base
+  acts_as_nosql field_name: :config
+
+  nosql_attrs :user_auth_token, type: String, default: '', path: [:user, :auth, :token]
+  nosql_attrs :user_auth_providers, type: Array, default: [], path: [:user, :auth, :providers]
+end
+
 module Schema
   def self.create
     ActiveRecord::Migration.verbose = false
@@ -24,6 +31,12 @@ module Schema
       create_table :articles, force: true do |t|
         t.string   :title
         t.json     :data
+        t.timestamps null: false
+      end
+
+      create_table :settings, force: true do |t|
+        t.string   :title
+        t.json     :config
         t.timestamps null: false
       end
     end
