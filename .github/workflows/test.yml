@@ -1,20 +1,18 @@
 name: Tests
 on: [push, pull_request]
-env:
-  ACTIVE_RECORD_ADAPTER: postgresql
-  DB_HOST: localhost
-  DB_USERNAME: postgres
-  DB_PASSWORD: postgres
 jobs:
-  test:
+  test_linux:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-latest]
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
         ruby: [2.7, '3.0', 3.1, head, truffleruby, truffleruby-head]
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
+    env:
+      ACTIVE_RECORD_ADAPTER: postgresql
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
     services:
       postgres:
         image: postgres:latest
@@ -31,6 +29,21 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - run: bundle exec rspec
+
+  test_macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
+        ruby: [2.7, '3.0', 3.1, head, truffleruby, truffleruby-head]
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
