@@ -5,8 +5,6 @@
 
 This gem allows to handle JSON and JSONB fields as if they are proper database columns, handling default values, type casting and simplifying validation.
 
-** THIS GEM IS UNDER ACTIVE DEVELOPMENT. DON'T USE IT IN PRODUCTION **
-
 ## Installation
 
 Add the gem to your Gemfile
@@ -25,12 +23,13 @@ class User < ApplicationRecord
   nosql_attrs :first_name, :last_name, type: :String
   # You can set the default value
   nosql_attr :age, type: :Integer, default: 0
-  # You can also pass a :path, write the attribute as a nested object
-  # `google_oauth_token` will be written in the JSON object as:
+  # You can also pass a :path attribute
+  # This is used to decide how to write the attribute as a nested object
+  # In this example, `google_oauth_token` will be written in the JSON object as:
   # `"oauth" => { "google_token" => __VALUE__ }`
   nosql_attr :google_oauth_token, type: :String, path: [:oauth, :google_token]
 
-  # You can run validations on this fields
+  # You can run standard ActiveRecord validations on these fields
   validates :first_name, :last_name, presence: true
 end
 
@@ -51,11 +50,9 @@ User.where(first_name: 'John').to_sql # => SELECT "users".* FROM "users" WHERE "
 ```
 
 ## TODO
-
-[x] Handle nested values
-[x] Basic Querying
-[x] Handle array types
-[ ] Release the Gem
+* Release the Gem
+* Complex querying
+* Issue the arrays mutation bug
 
 ## License
 
