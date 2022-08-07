@@ -10,7 +10,7 @@ This gem allows to handle JSON and JSONB fields as if they are proper database c
 Add the gem to your Gemfile
 
 ```ruby
-  gem 'acts_as_nosql', github: 'monade/acts_as_nosql'
+  gem 'acts_as_nosql'
 ```
 
 ## Example usage
