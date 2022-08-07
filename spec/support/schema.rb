@@ -13,6 +13,7 @@ elsif ENV['ACTIVE_RECORD_ADAPTER'] == 'postgresql'
   ActiveRecord::Base.establish_connection(
     adapter: 'postgresql',
     database: 'acts_as_nosql',
+    host: ENV['DB_HOST'] || '127.0.0.1',
     username: ENV['DB_USERNAME'] || 'postgres',
     password: ENV['DB_PASSWORD']
   )
