@@ -1,9 +1,28 @@
 require 'active_record'
 
-ActiveRecord::Base.establish_connection(
-  adapter: 'sqlite3',
-  database: ':memory:'
-)
+if ENV['ACTIVE_RECORD_ADAPTER'] == 'mysql'
+  puts 'Running on MySQL...'
+  ActiveRecord::Base.establish_connection(
+    adapter: 'mysql2',
+    username: ENV['DB_USERNAME'] || 'root',
+    password: ENV['DB_PASSWORD'],
+    database: 'acts_as_nosql'
+  )
+elsif ENV['ACTIVE_RECORD_ADAPTER'] == 'postgresql'
+  puts 'Running on PostgreSQL...'
+  ActiveRecord::Base.establish_connection(
+    adapter: 'postgresql',
+    database: 'acts_as_nosql',
+    username: ENV['DB_USERNAME'] || 'postgres',
+    password: ENV['DB_PASSWORD']
+  )
+else
+  puts 'Running on SQLite...'
+  ActiveRecord::Base.establish_connection(
+    adapter: 'sqlite3',
+    database: ':memory:'
+  )
+end
 
 class Article < ActiveRecord::Base
   acts_as_nosql field_name: :data

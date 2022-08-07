@@ -51,12 +51,30 @@ module ActsAsNosql
     def build_sql_query(attribute, value)
       field_name = model._acts_as_nosql_options[:field_name]
       ["#{quote_chain(attribute, field_name)} = ?", value]
-  end
+    end
 
     def quote_chain(attribute, field_name)
+      if connection.adapter_name == 'PostgreSQL'
+        quote_chain_psql(attribute, field_name)
+      else
+        quote_chain_base(attribute, field_name)
+      end
+    end
+
+    def quote_chain_base(attribute, field_name)
       base = quote_full_column(field_name)
-      path = (attribute.path || [attribute.name]).map { |e| connection.quote_column_name(e) }
-      ([base] + path).join('->>')
+      path = attribute.path || [attribute.name]
+      "#{base}->>'$.#{path.join('.')}'"
+    end
+
+    def quote_chain_psql(attribute, field_name)
+      base = quote_full_column(field_name)
+      path = attribute.path
+      if attribute.path
+        "#{base}->#{path[0...-1].map { |e| "'#{e}'"}.join('->')}->>'#{path.last}'"
+      else
+        "#{base}->>'#{attribute.name}'"
+      end
     end
 
     def quote_full_column(field_name)
