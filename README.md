@@ -50,8 +50,7 @@ User.where(first_name: 'John').to_sql # => SELECT "users".* FROM "users" WHERE "
 ```
 
 ## TODO
-* Release the Gem
-* Complex querying
+* Complex querying (`group`, `pluck`, etc...)
 * Issue the arrays mutation bug
 
 ## License
