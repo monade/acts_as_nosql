@@ -4,6 +4,7 @@ if ENV['ACTIVE_RECORD_ADAPTER'] == 'mysql'
   puts 'Running on MySQL...'
   ActiveRecord::Base.establish_connection(
     adapter: 'mysql2',
+    host: ENV['DB_HOST'] || '127.0.0.1',
     username: ENV['DB_USERNAME'] || 'root',
     password: ENV['DB_PASSWORD'],
     database: 'acts_as_nosql'
@@ -14,8 +15,8 @@ elsif ENV['ACTIVE_RECORD_ADAPTER'] == 'postgresql'
     adapter: 'postgresql',
     database: 'acts_as_nosql',
     host: ENV['DB_HOST'] || '127.0.0.1',
-    username: ENV['DB_USERNAME'] || 'postgres',
-    password: ENV['DB_PASSWORD']
+    username: ENV['DB_USERNAME'] || ENV['POSTGRES_USER'] || 'postgres',
+    password: ENV['DB_PASSWORD'] || ENV['POSTGRES_PASSWORD']
   )
 else
   puts 'Running on SQLite...'

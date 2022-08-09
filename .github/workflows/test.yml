@@ -1,18 +1,22 @@
 name: Tests
 on: [push, pull_request]
 jobs:
-  test_linux:
+  test:
     strategy:
       fail-fast: false
       matrix:
+        db:
+          - mysql
+          - postgresql
+          - sqlite3
         # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
         ruby: [2.7, '3.0', 3.1, head, truffleruby, truffleruby-head]
     runs-on: ubuntu-latest
     env:
-      ACTIVE_RECORD_ADAPTER: postgresql
-      DB_HOST: localhost
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      ACTIVE_RECORD_ADAPTER: ${{ matrix.db }}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      DB_HOST: '127.0.0.1'
     services:
       postgres:
         image: postgres:latest
@@ -28,24 +32,25 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - run: bundle exec rspec
 
-  test_macos:
-    strategy:
-      fail-fast: false
-      matrix:
-        # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
-        ruby: [2.7, '3.0', 3.1, head, truffleruby, truffleruby-head]
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
+    - if: ${{ matrix.db == 'mysql' }}
+      name: Setup MySQL
+      run: |
+        mysql -uroot --host=127.0.0.1 -e "CREATE DATABASE acts_as_nosql CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
