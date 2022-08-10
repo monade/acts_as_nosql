@@ -4,10 +4,10 @@ module ActsAsNosql
     extend ActiveSupport::Concern
 
     included do
-      after_initialize :_acts_as_nosql_init
+      after_initialize :_acts_as_nosql_init_defaults
     end
 
-    def _acts_as_nosql_init
+    def _acts_as_nosql_init_defaults
       self.class.nosql_attributes.each do |name, attribute|
         public_send("#{name}=", attribute.default.dup) if public_send(name).nil? && !attribute.default.nil?
       end
@@ -22,7 +22,7 @@ module ActsAsNosql
         attribute = self._acts_as_nosql_options[:field_name]
 
         names.each do |name|
-          raise "Attribute #{name} already defined" if instance_methods.include?(name.to_sym) || name.to_sym == attribute.to_sym
+          raise "Attribute #{name} already defined" if _acts_as_nosql_attribute_defined?(name)
 
           nosql_attributes[name] = ActsAsNosql::Attribute.new(name, type: type, default: default, path: path)
           _acts_as_nosql_define_attribute(nosql_attributes[name])
@@ -33,10 +33,34 @@ module ActsAsNosql
         self._acts_as_nosql_options[:attributes] ||= {}
       end
 
+      def connection
+        unless acts_as_nosql_conflicts_checked?
+          @acts_as_nosql_conflicts_checked = true
+          acts_as_nosql_check_conflicts!
+        end
+        super
+      end
+
+      def acts_as_nosql_conflicts_checked?
+        @acts_as_nosql_conflicts_checked ||= false
+      end
+
+      def acts_as_nosql_check_conflicts!
+        columns_map = columns.index_by(&:name)
+        nosql_attributes.each do |name, attribute|
+          raise "Attribute #{name} already defined" if columns_map[name.to_s]
+        end
+      end
+
       private
 
       def nosql_data_attribute
         @nosql_data_attribute ||= self._acts_as_nosql_options[:field_name]
+      end
+
+      def _acts_as_nosql_attribute_defined?(name)
+        instance_methods.include?(name.to_sym) ||
+          name.to_sym == nosql_data_attribute.to_sym
       end
 
       def _acts_as_nosql_define_attribute(nosql_attribute)
