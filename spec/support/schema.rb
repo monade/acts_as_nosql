@@ -44,6 +44,9 @@ class Setting < ActiveRecord::Base
   nosql_attrs :user_auth_providers, type: Array, default: [], path: [:user, :auth, :providers]
 end
 
+class InheritedSetting < Setting
+end
+
 module Schema
   def self.create
     ActiveRecord::Migration.verbose = false
@@ -56,6 +59,12 @@ module Schema
       end
 
       create_table :settings, force: true do |t|
+        t.string   :title
+        t.json     :config
+        t.timestamps null: false
+      end
+
+      create_table :inherited_settings, force: true do |t|
         t.string   :title
         t.json     :config
         t.timestamps null: false

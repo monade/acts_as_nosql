@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://rubygems.org/gems/acts_as_nosql'
   s.license     = 'MIT'
   s.add_dependency 'actionpack', ['>= 5', '< 8']
-  s.add_dependency 'activesupport', ['>= 5', '< 8']
   s.add_dependency 'activerecord', ['>= 5', '< 8']
+  s.add_dependency 'activesupport', ['>= 5', '< 8']
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rubocop'
 end

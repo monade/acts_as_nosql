@@ -29,6 +29,11 @@ module ActsAsNosql
         end
       end
 
+      def inherited(subclass)
+        subclass._acts_as_nosql_options = self._acts_as_nosql_options.deep_dup
+        super
+      end
+
       def nosql_attributes
         self._acts_as_nosql_options[:attributes] ||= {}
       end
