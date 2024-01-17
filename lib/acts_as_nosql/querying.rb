@@ -79,7 +79,7 @@ module ActsAsNosql
     end
 
     def quote_full_column(field_name)
-      connection.quote_table_name(arel_table.table_alias || arel_table.table_name) +
+      connection.quote_table_name(arel_table.table_alias || arel_table.name) +
         '.' +
         connection.quote_column_name(field_name)
     end
