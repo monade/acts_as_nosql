@@ -1,3 +1,4 @@
+require 'logger'
 require 'active_support'
 require 'rspec'
 require 'acts_as_nosql'
