@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project made by Monade Team are documented in this file. For info refer to team@monade.io
 
+## [0.2.0]
+### Fixed
+- Compatibility with Rails 8
+
 ## [0.1.3]
 ### Fixed
 - Compatibility with Rails 7.1
