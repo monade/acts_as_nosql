@@ -19,6 +19,8 @@ jobs:
         exclude:
           - rails: '~> 8.0.0'
             ruby: 3.1
+          - rails: '>= 0'
+            ruby: 3.1
     runs-on: ubuntu-latest
     env:
       CI_RAILS_VERSION: ${{ matrix.rails }}
