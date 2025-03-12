@@ -38,12 +38,17 @@ module ActsAsNosql
         self._acts_as_nosql_options[:attributes] ||= {}
       end
 
-      def connection
-        unless acts_as_nosql_conflicts_checked?
-          @acts_as_nosql_conflicts_checked = true
-          acts_as_nosql_check_conflicts!
-        end
-        super
+      def load_schema
+        result = super
+        acts_as_nosql_check_conflicts_when_needed!
+        result
+      end
+
+      def acts_as_nosql_check_conflicts_when_needed!
+        return if acts_as_nosql_conflicts_checked?
+
+        @acts_as_nosql_conflicts_checked = true
+        acts_as_nosql_check_conflicts!
       end
 
       def acts_as_nosql_conflicts_checked?
